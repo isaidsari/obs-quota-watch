@@ -1,22 +1,28 @@
-const interval = setInterval(function() {
-   __doPostBack('btnKontenjanGoster','');
-   
-   if (document.getElementById("grdDersler_lblKONad_1").text != '45/45') {
-	alert();
-   }
-	
- }, 5000);
+const intervalMs = 5000;
+const refreshElementId = 'btnKontenjanGoster';
+const quotaElementId = 'lblKontenjan';
+const refreshFunction = () => { __doPostBack(refreshElementId, '') };
 
-function a = {}
+function checkQuota(quotaText) {
 
-clearInterval(interval); // thanks @Luca D'Amico
+    const quotaParts = quotaText.split('/');
+    const total = parseInt(quotaParts[1]);
+    const taken = parseInt(quotaParts[0]);
 
-function myFunction() {
-   console.log(document.getElementById("grdDersler_lblKONad_2").textContent);
-__doPostBack('btnKontenjanGoster','');
-   
-   if (document.getElementById("grdDersler_lblKONad_2").textContent != '26/26') {
-	alert();
-   }
+    return total - taken;
 }
-setInterval(myFunction, 5000);
+
+const intervalId = setInterval(() => {
+
+    const quotaText = document.getElementById(quotaElementId).text;
+    const quota = checkQuota(quotaText);
+
+    if (quota > 0) {
+        alert('Quota is available!');
+        clearInterval(intervalId);
+    }
+    else {
+        refreshFunction();
+    }
+
+}, intervalMs);
